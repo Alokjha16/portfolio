@@ -321,8 +321,10 @@
       font-size: 15px;
     }
 
-    .mobile-menu a:hover {
+    .mobile-menu a:hover,
+    .mobile-menu a.active {
       background: rgba(255,255,255,.06);
+      color: white;
     }
 
     .hero {
@@ -835,20 +837,32 @@
     .reveal-right,
     .reveal-zoom {
       opacity: 0;
-      transition: opacity .8s ease, transform .8s ease;
+      transition: opacity 0.75s ease, transform 0.75s ease;
+      will-change: opacity, transform;
     }
 
-    .reveal { transform: translateY(35px); }
-    .reveal-left { transform: translateX(-70px); }
-    .reveal-right { transform: translateX(70px); }
-    .reveal-zoom { transform: scale(.92); }
+    .reveal {
+      transform: translateY(35px);
+    }
+
+    .reveal-left {
+      transform: translateX(-60px);
+    }
+
+    .reveal-right {
+      transform: translateX(60px);
+    }
+
+    .reveal-zoom {
+      transform: scale(0.92);
+    }
 
     .reveal.show,
     .reveal-left.show,
     .reveal-right.show,
     .reveal-zoom.show {
       opacity: 1;
-      transform: translate(0,0) scale(1);
+      transform: translate(0, 0) scale(1);
     }
 
     @media (max-width: 1100px) {
@@ -1109,17 +1123,17 @@
         </div>
 
         <div class="stats">
-          <div class="card stat">
+          <div class="card stat reveal">
             <h3>10+</h3>
             <p>Projects Built</p>
           </div>
 
-          <div class="card stat">
+          <div class="card stat reveal">
             <h3>2nd</h3>
             <p>Year Engineering Student</p>
           </div>
 
-          <div class="card stat">
+          <div class="card stat reveal">
             <h3>Hackathon</h3>
             <p>Finalist & Winner</p>
           </div>
@@ -1165,7 +1179,10 @@
           </div>
 
           <div class="contact-cards">
-            <a class="contact-card" href="mailto:alokjha1229@gmail.com?subject=Portfolio%20Contact&body=Hello%20Alok,%20I%20saw%20your%20portfolio.">
+            <a
+              class="contact-card"
+              href="mailto:alokjha1229@gmail.com?subject=Portfolio%20Contact&body=Hello%20Alok,%0A%0AI%20visited%20your%20portfolio%20and%20wanted%20to%20connect%20with%20you.%0A%0ARegards,"
+            >
               <div>📧</div>
               <h4>Email</h4>
               <p>alokjha1229@gmail.com</p>
@@ -1216,19 +1233,19 @@
           </p>
 
           <div class="two-col" style="margin-top:24px">
-            <div class="info-box">
+            <div class="info-box reveal">
               <h4>Education</h4>
               <p>B.E / Engineering – 2nd Year</p>
             </div>
-            <div class="info-box">
+            <div class="info-box reveal">
               <h4>Interest</h4>
               <p>Backend, Full Stack, AI/ML Projects</p>
             </div>
-            <div class="info-box">
+            <div class="info-box reveal">
               <h4>Open To</h4>
               <p>Internships, freelance, collaborations</p>
             </div>
-            <div class="info-box">
+            <div class="info-box reveal">
               <h4>Location</h4>
               <p>India</p>
             </div>
@@ -1489,7 +1506,13 @@
         </p>
 
         <div class="contact-actions">
-          <a class="btn btn-primary" href="mailto:alokjha1229@gmail.com">Send Email</a>
+          <a
+            class="btn btn-primary"
+            href="mailto:alokjha1229@gmail.com?subject=Portfolio%20Inquiry&body=Hello%20Alok,%0A%0AI%20visited%20your%20portfolio%20and%20wanted%20to%20connect%20with%20you%20regarding%20an%20opportunity.%0A%0ARegards,"
+          >
+            Send Email
+          </a>
+
           <a class="btn btn-secondary" href="https://github.com/Alokjha16" target="_blank">GitHub</a>
           <a class="btn btn-secondary" href="https://www.linkedin.com/in/alok-jha-933943357" target="_blank">LinkedIn</a>
         </div>
@@ -1533,49 +1556,63 @@
   <script>
     const cursorGlow = document.getElementById("cursorGlow");
 
-    if (window.innerWidth > 640) {
+    if (window.innerWidth > 640 && cursorGlow) {
       window.addEventListener("mousemove", (e) => {
         cursorGlow.style.left = e.clientX + "px";
         cursorGlow.style.top = e.clientY + "px";
       });
     }
 
-    const observer = new IntersectionObserver((entries) => {
-      entries.forEach((entry) => {
-        if (entry.isIntersecting) {
-          entry.target.classList.add("show");
-        }
-      });
-    }, { threshold: 0.15 });
+    const animatedElements = document.querySelectorAll(
+      ".reveal, .reveal-left, .reveal-right, .reveal-zoom"
+    );
 
-    document.querySelectorAll(".reveal, .reveal-left, .reveal-right, .reveal-zoom").forEach((el) => {
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            entry.target.classList.add("show");
+          } else {
+            entry.target.classList.remove("show");
+          }
+        });
+      },
+      {
+        threshold: 0.18,
+        rootMargin: "0px 0px -5% 0px"
+      }
+    );
+
+    animatedElements.forEach((el) => {
       observer.observe(el);
     });
 
     const menuToggle = document.getElementById("menuToggle");
     const mobileMenu = document.getElementById("mobileMenu");
 
-    menuToggle.addEventListener("click", () => {
-      mobileMenu.classList.toggle("open");
-    });
-
-    document.querySelectorAll(".mobile-menu a").forEach((link) => {
-      link.addEventListener("click", () => {
-        mobileMenu.classList.remove("open");
+    if (menuToggle && mobileMenu) {
+      menuToggle.addEventListener("click", () => {
+        mobileMenu.classList.toggle("open");
       });
-    });
+
+      document.querySelectorAll(".mobile-menu a").forEach((link) => {
+        link.addEventListener("click", () => {
+          mobileMenu.classList.remove("open");
+        });
+      });
+    }
 
     const sections = document.querySelectorAll("section, header");
     const navLinks = document.querySelectorAll(".nav-links a, .mobile-menu a");
 
-    window.addEventListener("scroll", () => {
+    function updateActiveLinks() {
       let current = "";
 
       sections.forEach((section) => {
         const sectionTop = section.offsetTop - 140;
         const sectionHeight = section.offsetHeight;
 
-        if (pageYOffset >= sectionTop && pageYOffset < sectionTop + sectionHeight) {
+        if (window.pageYOffset >= sectionTop && window.pageYOffset < sectionTop + sectionHeight) {
           current = section.getAttribute("id");
         }
       });
@@ -1586,7 +1623,10 @@
           link.classList.add("active");
         }
       });
-    });
+    }
+
+    window.addEventListener("scroll", updateActiveLinks);
+    window.addEventListener("load", updateActiveLinks);
   </script>
 </body>
 </html>
